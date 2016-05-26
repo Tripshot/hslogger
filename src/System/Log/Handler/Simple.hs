@@ -55,9 +55,9 @@ streamHandler :: Handle -> Priority -> IO (GenericHandler Handle)
 streamHandler h pri =
     do lock <- newMVar ()
        let mywritefunc hdl msg =
-               withMVar lock (\_ -> do writeToHandle hdl msg
-                                       hFlush hdl
-                             )
+             seq (length msg) $ withMVar lock (\_ -> do writeToHandle hdl msg
+                                                        hFlush hdl
+                                              )
        return (GenericHandler {priority = pri,
                                formatter = nullFormatter,
                                privData = h,
